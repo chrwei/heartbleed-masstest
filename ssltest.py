@@ -113,33 +113,33 @@ def hit_hb(s):
 def is_vulnerable(domain):
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.settimeout(2)
-	print 'Connecting...'
-	sys.stdout.flush()
+	#print 'Connecting...'
+	#sys.stdout.flush()
 	try:
 		if domain.find(":"):
 			host, port = domain.split(':')
-			s.connect((host, port))
+			s.connect((host, int(port)))
 		else:
 			s.connect((domain, 443))
 			
 	except Exception, e:
 		return None
-	print 'Sending Client Hello...'
-	sys.stdout.flush()
+	#print 'Sending Client Hello...'
+	#sys.stdout.flush()
 	s.send(hello)
-	print 'Waiting for Server Hello...'
-	sys.stdout.flush()
+	#print 'Waiting for Server Hello...'
+	#sys.stdout.flush()
 	while True:
 		typ, ver, pay = recvmsg(s)
 		if typ == None:
-			print 'Server closed connection without sending Server Hello.'
+			#print 'Server closed connection without sending Server Hello.'
 			return None
 		# Look for server hello done message.
 		if typ == 22 and ord(pay[0]) == 0x0E:
 			break
 
-	print 'Sending heartbeat request...'
-	sys.stdout.flush()
+	#print 'Sending heartbeat request...'
+	#sys.stdout.flush()
 	s.send(hb)
 	return hit_hb(s)
 
@@ -166,11 +166,6 @@ def main():
 	else:
 		print "not vulnerable."
 		counter_notvuln += 1
-
-	print
-	print "No SSL: " + str(counter_nossl)
-	print "Vulnerable: " + str(counter_vuln)
-	print "Not vulnerable: " + str(counter_notvuln)
 
 if __name__ == '__main__':
 	main()
